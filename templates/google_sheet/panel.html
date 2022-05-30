@@ -1,0 +1,104 @@
+{% extends './base.html' %}
+{% block content %}
+
+<style>
+    .container {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+      <div class="col">
+        <table class="table table-sm">
+            <thead>
+                <p><font size="4" color="green" face="Arial">Данные в таблице обновляются с обновлением страницы</font></p>
+                <font size="4" color="green" face="Arial"> Или переключением страниц пагинатора (под таблицей)</font></p>
+                <tr>
+                <th scope="col">id</th>
+                <th scope="col">номер</th>
+                <th scope="col">стоимость в $</th>
+                <th scope="col">дата поставки</th>
+                <th scope="col">стоимость в Руб.</th>
+                </tr>
+            </thead>
+        {% for item in page %}
+            <tbody>
+            <tr>
+                <th>{{item.id}}</th>
+                <td>{{item.order}}</td>
+                <td>{{item.price_usd}}</td>
+                <td>{{item.delivery_time}}</td>
+                <td>{{item.price_rub}}</td>
+            </tr>
+            </tbody>
+        {% endfor %}
+        </table>
+        {%  if page.has_other_pages  %}
+            <nav>
+            <ul class="pagination">
+                {%  if page.has_previous  %}
+                    <li class="page-item">
+                        <a class="btn btn-outline-success my-2 my-sm-0" href="?page={{ page.previous_page_number }}/"> < </a>
+                    </li>
+                {%  else  %}
+                <li class="page-item disabled">
+                    <span class="p-3 mb-2 bg-gradient-success text-white"> X </span>
+                </li>
+        {%  endif  %}
+        {%  for i in page.paginator.page_range  %}
+            {%  if page.number == i  %}
+                <li class="page-item active">
+                    <span class="btn btn-success">{{ i }}
+                    <span class="sr-only">(текущая)</span>
+                    </span>
+                </li>
+            {%  else  %}
+                <li class="page-item">
+                    <a class="btn btn-outline-success my-2 my-sm-0" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {%  endif  %}
+        {%  endfor  %}
+        {%  if page.has_next  %}
+            <li class="page-item">
+                <a class="btn btn-outline-success my-2 my-sm-0" href="?page={{ page.next_page_number }}"> > </a>
+            </li>
+        {%  else  %}
+            <li class="page-item disabled">
+                <span class="p-3 mb-2 bg-gradient-success text-white"> END </span>
+                </li>
+        {%  endif  %}
+            </ul>
+            </nav>
+        {%  endif  %}
+        </div>
+
+        <div class="col">
+            {% if process %}
+                <form class="form" action="{% url 'sheet:start_sheet' %}" method="POST">{% csrf_token %}
+                    {{ form.as_p }}
+                    <p><font size="4" color="green" face="Arial">По умолчанию в полях рекомендуемые значения</font></p>
+                    <p><font size="4" color="green" face="Arial">Можно просто запускать</font></p>
+                    <p><font size="4" color="red" face="Arial">Что бы изменить данные после зауска - перезапустите сервер</font></p>
+                    <p><font size="4" color="red" face="Arial">docker-compose restart -d</font></p>
+                    <button type="submit" class="btn btn-primary mt-2 mt-sm-0 btn-danger">Перезапуск</button>
+                </form>
+            {% else %}
+                <form class="form" action="{% url 'sheet:start_sheet' %}" method="POST">{% csrf_token %}
+                    {{ form.as_p }}
+                    <p><font size="4" color="green" face="Arial">По умолчанию в полях рекомендуемые значения</font></p>
+                    <p><font size="4" color="green" face="Arial">Можно просто запускать</font></p>
+                    <p><font size="4" color="red" face="Arial">Что бы изменить данные после зауска - перезапустите сервер</font></p>
+                    <p><font size="4" color="red" face="Arial">docker-compose restart -d</font></p>
+                    <button type="submit" class="btn btn-primary mt-2 mt-sm-0 btn-success">Запуск</button>
+                </form>
+            {% endif %}
+            <br>
+
+            <form action="https://telegram.me/userinfobot" target="_blank">
+                <button class="btn btn-primary">УЗНАТЬ СВОЙ ID TELEGRAM</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
